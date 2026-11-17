@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Титры Portal College</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: black;
+            color: #f1f1f1;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+        }
+
+        .scroll-container {
+            position: absolute;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            animation: scrollCredits 40s linear infinite; /* Увеличил время, так как с картинками блок станет длиннее */
+        }
+
+        .credits-content {
+            width: 80%;
+            margin: 0 auto;
+            text-align: center;
+            font-size: 5vh;
+            line-height: 1.8;
+            padding-bottom: 25vh; 
+        }
+
+        h2 { 
+            color: #ccff00; 
+            margin-top: 60px; 
+            margin-bottom: 20px;
+            font-size: 6vh; 
+        }
+        
+        p { margin: 10px 0; }
+
+        /* Настройки для адекватных размеров картинок на ТВ */
+        img {
+            max-width: 80%;
+            max-height: 30vh; /* Картинка не займет больше 30% высоты экрана */
+            object-fit: contain;
+            margin: 20px auto;
+            display: block;
+            border-radius: 12px; /* Легкое скругление для эстетики */
+        }
+
+        @keyframes scrollCredits {
+            0% { transform: translateY(100vh); }
+            100% { transform: translateY(calc(100vh - 50%)); } 
+        }
+    </style>
+</head>
+<body>
+
+    <div class="scroll-container" id="container"></div>
+
+    <script>
+        // =======================================================
+        // ТЕКСТ ССЮДА. ССЫЛКИ НА КАРТИНКИ (HTTP/HTTPS) ПРОСТО ВСТАВЛЯЙ НОВОЙ СТРОКОЙ
+        // =======================================================
+        const rawText = `
+Создатели возможностей
+Иван Иванов
+https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80
+Мария Смирнова
+
+Люди, обеспечивающие комфорт
+Алексей Петров
+Елена Васильева
+
+Авторы хороших случайностей
+Екатерина Иванова
+https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80
+Саламат
+        `;
+
+        function generateCredits(text) {
+            const blocks = text.trim().split(/\n\s*\n/);
+            let html = '';
+
+            blocks.forEach(block => {
+                const lines = block.split('\n').map(line => line.trim()).filter(line => line);
+                if (lines.length > 0) {
+                    html += `<h2>${lines[0]}</h2>\n`; 
+                    for (let i = 1; i < lines.length; i++) {
+                        // Если строка начинается с http или https — делаем картинку
+                        if (lines[i].startsWith('http://') || lines[i].startsWith('https://')) {
+                            // onerror спрячет картинку, если ссылка окажется нерабочей
+                            html += `<img src="${lines[i]}" alt="Фото" onerror="this.style.display='none'">\n`;
+                        } else {
+                            html += `<p>${lines[i]}</p>\n`; 
+                        }
+                    }
+                }
+            });
+
+            return `<div class="credits-content">\n${html}</div>`;
+        }
+
+        const container = document.getElementById('container');
+        const contentHtml = generateCredits(rawText);
+        
+        container.innerHTML = contentHtml + contentHtml;
+    </script>
+</body>
+</html>
